@@ -1,5 +1,8 @@
 unit ujsonrpc;
-//{$mode objfpc}
+{$IFDEF FPC}
+ {$mode objfpc} 
+{$ENDIF}
+
 interface
 uses
   Classes,
@@ -39,7 +42,7 @@ type
       error: IJsonRpcMessage): IJsonRpcMessage; overload;
     class function Error(error: IJsonRpcMessage): IJsonRpcMessage; overload;
     class function Parse(const s: string): TJsonRpcParsed;
-    // РґР°РЅРЅС‹Рµ Рѕ СЂР°Р·Р±РѕСЂРµ
+    // данные о разборе
   protected
     FJsonObj: ISuperObject;
   public
@@ -237,7 +240,7 @@ begin
 end;
 { TJsonRpcMessage }
 
-// РЎРѕР·РґР°РµС‚ JSON-RPC 2.0 РѕР±СЉРµРєС‚-request
+// Создает JSON-RPC 2.0 объект-request
 // @param  {Integer} id
 // @param  {String} method
 // @param  {ISuperObject} [params]: optional
@@ -248,7 +251,7 @@ class function TJsonRpcMessage.Request(const id: integer;
 begin
   result := TJsonRpcRequestObject.Create(id, method, params);
 end;
-// РЎРѕР·РґР°РµС‚ JSON-RPC 2.0 РѕР±СЉРµРєС‚-request
+// Создает JSON-RPC 2.0 request object
 // @param  {String} id
 // @param  {String} method
 // @param  {ISuperObject} [params]: optional
@@ -259,7 +262,7 @@ class function TJsonRpcMessage.Request(const id: string;
 begin
   result := TJsonRpcRequestObject.Create(id, method, params);
 end;
-// РЎРѕР·РґР°РµС‚ JSON-RPC 2.0 РѕР±СЉРµРєС‚-notification
+// Создает JSON-RPC 2.0 объект-notification
 // @param  {String} method
 // @param  {ISuperObject} [params]: optional
 // @return {ISuperObject} JsonRpc object
@@ -275,7 +278,7 @@ begin
   result := TJsonRpcMessage.Notification(method, nil);
 end;
 
-// РЎРѕР·РґР°РµС‚ JSON-RPC 2.0 РѕР±СЉРµРєС‚-success
+// Создает JSON-RPC 2.0 success object
 // @param  {Integer} id
 // @param  {ISuperObject} requestResult
 // @return {ISuperObject} JsonRpc object
@@ -285,7 +288,7 @@ class function TJsonRpcMessage.Success(const id: integer;
 begin
   result := TJsonRpcSuccessObject.Create(id, requestResult);
 end;
-// РЎРѕР·РґР°РµС‚ JSON-RPC 2.0 РѕР±СЉРµРєС‚-success
+// Создает JSON-RPC 2.0 success object
 // @param  {Integer} id
 // @param  {string} requestResult
 // @return {ISuperObject} JsonRpc object
@@ -309,7 +312,7 @@ begin
 end;
 
 
-// РЎРѕР·РґР°РµС‚ JSON-RPC 2.0 РѕР±СЉРµРєС‚-error
+// Создает JSON-RPC 2.0 error object
 // @param  {integer} id
 // @param  {ISuperObject} error
 // @return {ISuperObject} JsonRpc object
@@ -319,7 +322,7 @@ class function TJsonRpcMessage.Error(const id: integer;
 begin
   result := TJsonRpcErrorObject.Create(id, error);
 end;
-// РЎРѕР·РґР°РµС‚ JSON-RPC 2.0 РѕР±СЉРµРєС‚-error
+// Создает JSON-RPC 2.0 error object
 // @param  {string} id
 // @param  {ISuperObject} error
 // @return {ISuperObject} JsonRpc object
@@ -330,7 +333,7 @@ begin
   result := TJsonRpcErrorObject.Create(id, error);
 end;
 
-// РЎРѕР·РґР°РµС‚ JSON-RPC 2.0 РѕР±СЉРµРєС‚-error
+// Создает JSON-RPC 2.0 error object
 // @param  {ISuperObject} error
 // @return {ISuperObject} JsonRpc object
 
@@ -465,8 +468,8 @@ class function TJsonRpcMessage.Parse(const s: string): TJsonRpcParsed;
     if AJsonObj.AsObject.Exists('params') then
       params := AJsonObj.O['params'];
 
-    // Р•СЃР»Рё СѓРІРµРґРѕРјР»РµРЅРёРµ id - РЅРµС‚ РёР»Рё null, method - РѕР±СЏР·Р°С‚РµР»СЊРЅРѕ,
-    // params - json-РѕР±СЉРµРєС‚ РјРѕР¶РµС‚ Р±С‹С‚СЊ РїСЂРѕРїСѓС‰РµРЅРѕ.
+    // Если уведомление id - нет или null, method - обязательно,
+    // params - json-объект может быть пропущено.
     if not SubIdPresentAndNotNull(AJsonObj) then
     begin
       if not SubCheckMethod(AJsonObj, result, method) then
@@ -475,8 +478,8 @@ class function TJsonRpcMessage.Parse(const s: string): TJsonRpcParsed;
         TJsonRpcMessage.Notification(method, params));
       Exit;
     end;
-    // РРјРµРµРј Id - String РёР»Рё Int
-    // РќР°РІРµСЂРЅРѕРµ СЌС‚Рѕ: Р·Р°РїСЂРѕСЃ РёР»Рё РѕС‚РІРµС‚ РёР»Рё РѕС€РёР±РєР°
+    // Имеем Id - String или Int
+    // Наверное это: запрос или ответ или ошибка
     if SubCheckMethod(AJsonObj, result, method) then
     begin
       idStr := AJsonObj.S['id'];
@@ -488,7 +491,7 @@ class function TJsonRpcMessage.Parse(const s: string): TJsonRpcParsed;
     begin
       if Assigned(result) then // eeror inside
         Exit;
-      // Р­С‚Рѕ success MESSAGE
+      // Это success MESSAGE
       if AJsonObj.AsObject.Exists('result') then
       begin
         if not SubCheckResult(AJsonObj, result) then
