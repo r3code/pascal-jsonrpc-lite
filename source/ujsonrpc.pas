@@ -15,7 +15,7 @@ type
   IJsonRpcMessage = interface
     ['{8D772760-D6B8-483D-A734-F6D60D845AA5}']
     function AsJSon(indent: boolean = false; escape: boolean = true): string;
-    function asJsonObject: ISuperObject;
+    function AsJsonObject: ISuperObject;
   end;
 
   { TJsonRpcMessage }
@@ -48,7 +48,7 @@ type
   public
     constructor Create();
     function AsJSon(indent: boolean = false; escape: boolean = true): string; virtual;
-    function asJsonObject: ISuperObject; virtual;
+    function AsJsonObject: ISuperObject; virtual;
   end;
   { TJsonRpcRequestObject }
   TJsonRpcRequestObject = class(TJsonRpcMessage, IJsonRpcMessage)
@@ -125,7 +125,7 @@ type
       ISuperObject); overload;
     constructor Create(const code: integer; const message: string; data:
       string); overload;
-    function asJsonObject: ISuperObject;
+    function AsJsonObject: ISuperObject;
     function AsJSon(indent: boolean = false; escape: boolean = true): string;
   end;
   
@@ -167,21 +167,21 @@ constructor TJsonRpcErrorObject.Create(error: IJsonRpcMessage);
 begin
   inherited Create();
   FJsonObj.N['id'] := nil;
-  FJsonObj.O['error'] := error.asJsonObject;
+  FJsonObj.O['error'] := error.AsJsonObject;
 end;
 
 constructor TJsonRpcErrorObject.Create(const id: integer; error: IJsonRpcMessage);
 begin
   inherited Create();
   FJsonObj.I['id'] := id;
-  FJsonObj.O['error'] := error.asJsonObject;
+  FJsonObj.O['error'] := error.AsJsonObject;
 end;
 
 constructor TJsonRpcErrorObject.Create(const id: string; error: IJsonRpcMessage);
 begin
   inherited Create();
   FJsonObj.S['id'] := id;
-  FJsonObj.O['error'] := error.asJsonObject;
+  FJsonObj.O['error'] := error.AsJsonObject;
 end;
 { TJsonRpcParsed }
 
@@ -387,7 +387,7 @@ class function TJsonRpcMessage.Parse(const s: string): TJsonRpcParsed;
     result := False;
     if not AJsonObj.AsObject.Exists('method') then
     begin
-      errData := TJsonRpcError.invalidRequest(SO('No Method field'));
+      errData := TJsonRpcError.InvalidRequest('No Method field');
       FoundError := TJsonRpcParsed.Create(jotInvalid,
         TJsonRpcErrorObject.Create(errData));
       Exit;
@@ -395,7 +395,7 @@ class function TJsonRpcMessage.Parse(const s: string): TJsonRpcParsed;
     FoundMethod := AJsonObj.S['method'];
     if length(FoundMethod) = 0 then
     begin
-      errData := TJsonRpcError.methodNotFound(SO('Empty Method field'));
+      errData := TJsonRpcError.methodNotFound('Empty Method field');
       FoundError := TJsonRpcParsed.Create(jotInvalid,
         TJsonRpcErrorObject.Create(errData));
         Exit;
@@ -456,7 +456,6 @@ class function TJsonRpcMessage.Parse(const s: string): TJsonRpcParsed;
 
   function SubParseObject(AJsonObj: ISuperObject): TJsonRpcParsed;
   var
-    idStr: string;
     method: string;
     params: ISuperObject;
     errorObj: ISuperObject;
@@ -482,39 +481,58 @@ class function TJsonRpcMessage.Parse(const s: string): TJsonRpcParsed;
     // Наверное это: запрос или ответ или ошибка
     if SubCheckMethod(AJsonObj, result, method) then
     begin
-      idStr := AJsonObj.S['id'];
-      result := TJsonRpcParsed.Create(jotRequest,
-        TJsonRpcMessage.Request(idStr, method, params));
+      case AJsonObj.O['id'].DataType of
+        stInt:
+          result := TJsonRpcParsed.Create(jotRequest,
+            TJsonRpcMessage.Request(AJsonObj.I['id'], method, params));
+        stString:
+          result := TJsonRpcParsed.Create(jotRequest,
+            TJsonRpcMessage.Request(AJsonObj.S['id'], method, params));
+      end;
       Exit;
     end
     else
-    begin
-      if Assigned(result) then // eeror inside
-        Exit;
-      // Это success MESSAGE
+    begin  // когда нет поля METHOD
+      // check for success MESSAGE (id, result)
       if AJsonObj.AsObject.Exists('result') then
       begin
         if not SubCheckResult(AJsonObj, result) then
           Exit;
-        result := TJsonRpcParsed.Create(jotSuccess,
-          TJsonRpcMessage.Success(idStr, AJsonObj.O['result']));
+        case AJsonObj.O['id'].DataType of
+          stInt:
+            result := TJsonRpcParsed.Create(jotSuccess,
+              TJsonRpcMessage.Success(AJsonObj.I['id'], AJsonObj.O['result']));
+          stString:
+            result := TJsonRpcParsed.Create(jotSuccess,
+              TJsonRpcMessage.Success(AJsonObj.S['id'], AJsonObj.O['result']));
+        end;
         Exit;
       end;
-      // ERROR MESSAGE
+      
+      // check for ERROR MESSAGE (id, error)
       if AJsonObj.AsObject.Exists('error') then
       begin
         if not SubCheckError(AJsonObj, result) then
           Exit;
         errorObj := AJsonObj.O['error'];
 
-        result := TJsonRpcParsed.Create(jotError,
-          TJsonRpcMessage.Error(idStr, TJsonRpcError.Create(
-            errorObj.I['code'], errorObj.S['message'], errorObj.N['data'])));
+        case AJsonObj.O['id'].DataType of
+          stInt:
+            result := TJsonRpcParsed.Create(jotError,
+              TJsonRpcMessage.Error(AJsonObj.I['id'], TJsonRpcError.Create(
+                errorObj.I['code'], errorObj.S['message'], errorObj.N['data'])));
+          stString:
+            result := TJsonRpcParsed.Create(jotError,
+              TJsonRpcMessage.Error(AJsonObj.S['id'], TJsonRpcError.Create(
+                errorObj.I['code'], errorObj.S['message'], errorObj.N['data'])));
+        end;
         Exit;
       end;
-      result := TJsonRpcParsed.Create(jotInvalid,
-        TJsonRpcError.InternalError(AJsonObj));
-      Exit;
+
+      // не найден: result, error - значит это порченный запрос, раз есть ID!
+      // Have: id
+      if Assigned(result) then // error inside
+        Exit;
     end;
     result := TJsonRpcParsed.Create(jotInvalid,
         TJsonRpcError.InternalError(AJsonObj));
@@ -535,7 +553,7 @@ end;
 constructor TJsonRpcMessage.Create;
 begin
   FJsonObj := SO();
-  FJsonObj.S['version'] := '2.0';
+  FJsonObj.S['jsonrpc'] := '2.0';
 end;
 
 { TJsonRpcError }
@@ -597,7 +615,7 @@ begin
   result := TJsonRpcError.Create(-32603, 'Internal Error', data);
 end;
 
-function TJsonRpcError.asJsonObject: ISuperObject;
+function TJsonRpcError.AsJsonObject: ISuperObject;
 begin
   Result := FJsonObj.Clone;
 end;
@@ -633,7 +651,7 @@ begin
 end;
 
 
-function TJsonRpcMessage.asJsonObject: ISuperObject;
+function TJsonRpcMessage.AsJsonObject: ISuperObject;
 begin
   Result := FJsonObj.Clone;
 end;
