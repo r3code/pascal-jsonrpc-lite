@@ -94,7 +94,7 @@ OutputDir=..\build\bin
 UnitOutputDir=..\build\dcu
 PackageDLLOutputDir=..\build\bin
 PackageDCPOutputDir=
-SearchPath=$(DELPHI)\Lib\Debug;D:\DELPHI~1\JCL\official\JCL-26~1.517\lib\d7\debug;D:\DELPHI~1\JCL\official\JCL-27~1.567\lib\d7\debug;.\;..\Source
+SearchPath=$(DELPHI)\Lib\Debug;D:\DELPHI~1\JCL\official\JCL-26~1.517\lib\d7\debug;D:\DELPHI~1\JCL\official\JCL-27~1.567\lib\d7\debug;.\;..\Source;..\Source\utils
 Packages=vcl;rtl;dbrtl;inet;inetdb;dsnap;bdertl;vclx;vcldb;vcldbx;visualclx;visualdbclx;vclactnband;vclshlctrls;vclie;xmlrtl;inetdbbde;inetdbxpress;webdsnap;soaprtl;websnap;adortl;dbexpress;dsnapcon;dbxcds;ibxpress;teeui;teedb;tee;dclOfficeXP;VclNewlyext;JclDeveloperTools;Jcl;JclVcl;JclContainers;madBasic_;madDisAsm_;madExcept_;ZComponent;ZParseSql;ZCore;ZDbc;ZPlain
 Conditionals=DEBUG;FastMM
 DebugSourceDirs=
@@ -136,9 +136,10 @@ Item1=DEBUG
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 [HistoryLists\hlSearchPath]
-Count=2
-Item0=$(DELPHI)\Lib\Debug;D:\DELPHI~1\JCL\official\JCL-26~1.517\lib\d7\debug;D:\DELPHI~1\JCL\official\JCL-27~1.567\lib\d7\debug;.\;..\Source
-Item1=$(DELPHI)\Lib\Debug;D:\DELPHI~1\JCL\official\JCL-26~1.517\lib\d7\debug;D:\DELPHI~1\JCL\official\JCL-27~1.567\lib\d7\debug
+Count=3
+Item0=$(DELPHI)\Lib\Debug;D:\DELPHI~1\JCL\official\JCL-26~1.517\lib\d7\debug;D:\DELPHI~1\JCL\official\JCL-27~1.567\lib\d7\debug;.\;..\Source;..\Source\utils
+Item1=$(DELPHI)\Lib\Debug;D:\DELPHI~1\JCL\official\JCL-26~1.517\lib\d7\debug;D:\DELPHI~1\JCL\official\JCL-27~1.567\lib\d7\debug;.\;..\Source
+Item2=$(DELPHI)\Lib\Debug;D:\DELPHI~1\JCL\official\JCL-26~1.517\lib\d7\debug;D:\DELPHI~1\JCL\official\JCL-27~1.567\lib\d7\debug
 [HistoryLists\hlUnitOutputDirectory]
 Count=1
 Item0=..\build\dcu
