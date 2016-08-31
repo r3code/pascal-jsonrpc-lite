@@ -1,3 +1,6 @@
+//
+// Author: Dmitriy S. Sinyavskiy, 2016
+// 
 unit ujsonrpc;
 {$IFDEF FPC}
 {$MODE objfpc}
@@ -682,4 +685,3 @@ begin
 end;
 
 end.
-

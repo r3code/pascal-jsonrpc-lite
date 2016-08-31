@@ -1,3 +1,6 @@
+//
+// Author: Dmitriy S. Sinyavskiy, 2016
+// 
 unit ujsonrpccustomerrors;
 
 {$IFDEF FPC}

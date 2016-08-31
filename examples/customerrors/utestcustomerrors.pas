@@ -1,3 +1,6 @@
+//
+// Author: Dmitriy S. Sinyavskiy, 2016
+// 
 unit utestcustomerrors;
 
 interface
@@ -59,4 +62,3 @@ initialization
   TestFramework.RegisterTest(TTestCustomErrors.Suite);
 
 end.
-

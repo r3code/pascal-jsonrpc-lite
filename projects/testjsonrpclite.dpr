@@ -1,3 +1,7 @@
+//
+// Author: Dmitriy S. Sinyavskiy, 2016
+// 
+
 //{$DEFINE DUNIT_CONSOLE_MODE}
 
 program testjsonrpclite;
