@@ -50,8 +50,8 @@ type
     FJsonObj: ISuperObject;
   public
     constructor Create();
-    function AsJSon(indent: boolean = false; escape: boolean = true): string;
-      virtual;
+    function AsJSon(indent: boolean = false; escape: boolean = true):
+      string; virtual;
     function AsJsonObject: ISuperObject; virtual;
   end;
 
