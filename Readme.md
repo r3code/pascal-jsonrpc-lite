@@ -12,7 +12,7 @@ Inspired by https://github.com/teambition/jsonrpc-lite.
 1. Download.
 2. Extract.
 3. Add ujsonrpc.pas to your project or add path to ujsonrpc.pas to Lib Path.
-4. ```pascal
+```pascal
 uses ujsonrpc;
 ```
 
