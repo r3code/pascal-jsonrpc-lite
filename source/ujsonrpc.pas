@@ -136,10 +136,11 @@ type
   private
     FJsonObj: ISuperObject;
   public
-    constructor Create(const code: integer; const message: string; data:
-      ISuperObject); overload;
-    constructor Create(const code: integer; const message: string; data:
-      string); overload;
+    constructor Create(const code: integer; const message: string);
+    constructor Create(const code: integer; const message: string;
+      data: ISuperObject); overload;
+    constructor Create(const code: integer; const message: string;
+      data: string); overload;
     function AsJsonObject: ISuperObject;
     function AsJSon(indent: boolean = false; escape: boolean = true): string;
   end;
@@ -653,23 +654,27 @@ begin
   Result := FJsonObj.AsJSon(indent, escape);
 end;
 
+constructor TJsonRpcError.Create(const code: integer;
+  const message: string);
+begin
+  FJsonObj := SO();
+  FJsonObj.I['code'] := code;
+  FJsonObj.S['message'] := message;
+end;
+
 { TJsonRpcError }
 
 constructor TJsonRpcError.Create(const code: integer;
   const message: string; data: ISuperObject);
 begin
-  FJsonObj := SO();
-  FJsonObj.I['code'] := code;
-  FJsonObj.S['message'] := message;
+  Create(code, message);
   FJsonObj.N['data'] := data;
 end;
 
 constructor TJsonRpcError.Create(const code: integer;
   const message: string; data: string);
 begin
-  FJsonObj := SO();
-  FJsonObj.I['code'] := code;
-  FJsonObj.S['message'] := message;
+  Create(code, message);
   FJsonObj.S['data'] := data;
 end;
 

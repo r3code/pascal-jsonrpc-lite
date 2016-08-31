@@ -140,13 +140,13 @@ Create a TJsonRpcParsed instance.
 ### Class: TJsonRpcError
 Realizes interface IJsonRpcMessage.
 
-#### Constructor: TJsonRpcError.Create(code,message,data)
+#### Constructor: TJsonRpcError.Create(code,message[,data])
 
 Create a TJsonRpcError instance.
 
 - `code`:  {Integer}
 - `message`:  {String}
-- `data`: {String|ISuperObject|nil}
+- `data`: {String|ISuperObject|nil} optional
 
 ```pascal
 var error: TJsonRpcError;
