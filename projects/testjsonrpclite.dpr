@@ -2,8 +2,6 @@
 
 program testjsonrpclite;
 
-{$I FastMM4Options.inc}
-
 uses
   FastMM4,
   SysUtils,

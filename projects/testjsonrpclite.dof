@@ -94,9 +94,9 @@ OutputDir=..\build\bin
 UnitOutputDir=..\build\dcu
 PackageDLLOutputDir=..\build\bin
 PackageDCPOutputDir=
-SearchPath=$(DELPHI)\Lib\Debug;D:\DELPHI~1\JCL\official\JCL-26~1.517\lib\d7\debug;D:\DELPHI~1\JCL\official\JCL-27~1.567\lib\d7\debug
+SearchPath=$(DELPHI)\Lib\Debug;D:\DELPHI~1\JCL\official\JCL-26~1.517\lib\d7\debug;D:\DELPHI~1\JCL\official\JCL-27~1.567\lib\d7\debug;.\;..\Source
 Packages=vcl;rtl;dbrtl;inet;inetdb;dsnap;bdertl;vclx;vcldb;vcldbx;visualclx;visualdbclx;vclactnband;vclshlctrls;vclie;xmlrtl;inetdbbde;inetdbxpress;webdsnap;soaprtl;websnap;adortl;dbexpress;dsnapcon;dbxcds;ibxpress;teeui;teedb;tee;dclOfficeXP;VclNewlyext;JclDeveloperTools;Jcl;JclVcl;JclContainers;madBasic_;madDisAsm_;madExcept_;ZComponent;ZParseSql;ZCore;ZDbc;ZPlain
-Conditionals=DEBUG
+Conditionals=DEBUG;FastMM
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
@@ -129,14 +129,16 @@ FileVersion=1.0.0.0
 D:\DelphiCommonLibs\zeoslib\zeoslib-7.1.4\packages\delphi7\build\ZComponentDesign70.bpl=Zeos Database Components
 c:\program files\borland\delphi7\Bin\dclindy70.bpl=Internet Direct (Indy) for D7 Property and Component Editors
 [HistoryLists\hlConditionals]
-Count=1
-Item0=DEBUG
+Count=2
+Item0=DEBUG;FastMM
+Item1=DEBUG
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 [HistoryLists\hlSearchPath]
-Count=1
-Item0=$(DELPHI)\Lib\Debug;D:\DELPHI~1\JCL\official\JCL-26~1.517\lib\d7\debug;D:\DELPHI~1\JCL\official\JCL-27~1.567\lib\d7\debug
+Count=2
+Item0=$(DELPHI)\Lib\Debug;D:\DELPHI~1\JCL\official\JCL-26~1.517\lib\d7\debug;D:\DELPHI~1\JCL\official\JCL-27~1.567\lib\d7\debug;.\;..\Source
+Item1=$(DELPHI)\Lib\Debug;D:\DELPHI~1\JCL\official\JCL-26~1.517\lib\d7\debug;D:\DELPHI~1\JCL\official\JCL-27~1.567\lib\d7\debug
 [HistoryLists\hlUnitOutputDirectory]
 Count=1
 Item0=..\build\dcu

@@ -19,7 +19,7 @@ type
     procedure TestParseNotifyWithParamJsonOK;
     procedure TestParseSuccessStrResultOK;
     procedure TestParseErrorOK;
-    procedure TestParseInvalidFound;
+    procedure TestParseNoJsonrpcField;
   end;
 
 implementation
@@ -34,7 +34,7 @@ end;
 
 procedure TTestJsonRpc.Setup;
 begin
-
+  Self.FailsOnMemoryLeak := true;
 end;
 
 procedure TTestJsonRpc.TearDown;
@@ -43,12 +43,32 @@ begin
 end;
 
 procedure TTestJsonRpc.TestParseErrorOK;
+const
+  testMsg = '{ jsonrpc: "2.0", id:1, error: { code: -32600, message: "Invalid Request", data: "blabla" } }';
+var
+  expected, actual: IJsonRpcParsed;
 begin
-  
+  expected := TJsonRpcParsed.Create(jotError,
+    TJsonRpcErrorObject.Create(1, TJsonRpcError.Create(-32600,
+      'Invalid Request', 'blabla')));
+  actual := TJsonRpcMessage.Parse(testMsg);
+  CheckEquals(expected.GetMessagePayload.AsJSon, actual.GetMessagePayload.AsJSon());
+  CheckEquals(GetMessageTypeName(expected.GetMessageType),
+    GetMessageTypeName(actual.GetMessageType));  
 end;
 
-procedure TTestJsonRpc.TestParseInvalidFound;
+procedure TTestJsonRpc.TestParseNoJsonrpcField;
+const
+  testMsg = '{ method: "alarm_notify", params: { object: 102 } }';
+var
+  expected, actual: IJsonRpcParsed;
 begin
+  expected := TJsonRpcParsed.Create(jotInvalid,
+    TJsonRpcErrorObject.Create(TJsonRpcError.InvalidRequest('No jsonrpc field')));
+  actual := TJsonRpcMessage.Parse(testMsg);
+  CheckEquals(expected.GetMessagePayload.AsJSon, actual.GetMessagePayload.AsJSon());
+    CheckEquals(GetMessageTypeName(expected.GetMessageType),
+      GetMessageTypeName(actual.GetMessageType));
 
 end;
 
@@ -89,7 +109,7 @@ begin
     TJsonRpcSuccessObject.Create(1,'success'));
   actual := TJsonRpcMessage.Parse(testMsg);
   CheckEquals(expected.GetMessagePayload.AsJSon, actual.GetMessagePayload.AsJSon());
-    CheckEquals(GetMessageTypeName(expected.GetMessageType), GetMessageTypeName(actual.GetMessageType));  
+  CheckEquals(GetMessageTypeName(expected.GetMessageType), GetMessageTypeName(actual.GetMessageType));  
 end;
 
 initialization
