@@ -136,7 +136,7 @@ type
   private
     FJsonObj: ISuperObject;
   public
-    constructor Create(const code: integer; const message: string);
+    constructor Create(const code: integer; const message: string); overload;
     constructor Create(const code: integer; const message: string;
       data: ISuperObject); overload;
     constructor Create(const code: integer; const message: string;
