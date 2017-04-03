@@ -88,12 +88,21 @@ end;
 
 procedure TTestJsonRpc.TestParseRequestOK;
 const
-  testMsg = '{ jsonrpc: "2.0", id:1, method: "check", params: { a:2 } }';
+  testMsg =
+    '{"jsonrpc":"2.0",'
+    + '"id":1491225202566,'
+    + '"method":"AUTH",'
+    + '"params":{'
+    + '  "appId":901,'
+    + '  "secretWord":"D4A0999956449F3A5DEA3EE29BA8AEBD"'
+    + ' }'
+    + '}';
 var
   expected, actual: IJsonRpcParsed;
 begin
   expected := TJsonRpcParsed.Create(jotRequest,
-    TJsonRpcRequestObject.Create(1,'check',SO('{a: 2}')));
+    TJsonRpcRequestObject.Create(1491225202566,'AUTH',
+      SO('{"secretWord":"D4A0999956449F3A5DEA3EE29BA8AEBD","appId":901}')));
   actual := TJsonRpcMessage.Parse(testMsg);
   CheckEquals(expected.GetMessagePayload.AsJSon, actual.GetMessagePayload.AsJSon());
     CheckEquals(GetMessageTypeName(expected.GetMessageType), GetMessageTypeName(actual.GetMessageType));  

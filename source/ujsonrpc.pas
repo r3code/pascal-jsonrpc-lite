@@ -27,7 +27,7 @@ type
   { TJsonRpcMessage }
 
   TJsonRpcMessage = class(TInterfacedObject, IJsonRpcMessage)
-    class function Request(const id: integer; const method: string;
+    class function Request(const id: Int64; const method: string;
       params: ISuperObject): IJsonRpcMessage; overload;
     class function Request(const id: string; const method: string;
       params: ISuperObject): IJsonRpcMessage; overload;
@@ -35,15 +35,15 @@ type
       params: ISuperObject): IJsonRpcMessage; overload;
     class function Notification(const method: string): IJsonRpcMessage;
       overload;
-    class function Success(const id: integer;
+    class function Success(const id: Int64;
       requestResult: ISuperObject): IJsonRpcMessage; overload;
-    class function Success(const id: integer;
+    class function Success(const id: Int64;
       requestResult: string): IJsonRpcMessage; overload;
     class function Success(const id: string;
       requestResult: ISuperObject): IJsonRpcMessage; overload;
     class function Success(const id: string;
       requestResult: string): IJsonRpcMessage; overload;
-    class function Error(const id: integer;
+    class function Error(const id: Int64;
       error: IJsonRpcMessage): IJsonRpcMessage; overload;
     class function Error(const id: string;
       error: IJsonRpcMessage): IJsonRpcMessage; overload;
@@ -61,7 +61,7 @@ type
   { TJsonRpcRequestObject }
 
   TJsonRpcRequestObject = class(TJsonRpcMessage, IJsonRpcMessage)
-    constructor Create(const id: integer; const method: string; params:
+    constructor Create(const id: Int64; const method: string; params:
       ISuperObject); overload;
     constructor Create(const id: string; const method: string; params:
       ISuperObject); overload;
@@ -77,8 +77,8 @@ type
   { TJsonRpcSuccess }
 
   TJsonRpcSuccessObject = class(TJsonRpcMessage, IJsonRpcMessage)
-    constructor Create(const id: integer; result: ISuperObject); overload;
-    constructor Create(const id: integer; result: string); overload;
+    constructor Create(const id: Int64; result: ISuperObject); overload;
+    constructor Create(const id: Int64; result: string); overload;
     constructor Create(const id: string; result: ISuperObject); overload;
     constructor Create(const id: string; result: string); overload;
   end;
@@ -87,7 +87,7 @@ type
 
   TJsonRpcErrorObject = class(TJsonRpcMessage, IJsonRpcMessage)
     constructor Create(error: IJsonRpcMessage); overload;
-    constructor Create(const id: integer; error: IJsonRpcMessage); overload;
+    constructor Create(const id: Int64; error: IJsonRpcMessage); overload;
     constructor Create(const id: string; error: IJsonRpcMessage); overload;
   end;
 
@@ -155,7 +155,7 @@ implementation
 // @param  {String} method
 // @param  {ISuperObject} [params]: optional
 // @return {ISuperObject} JsonRpc object
-class function TJsonRpcMessage.Request(const id: integer;
+class function TJsonRpcMessage.Request(const id: Int64;
   const method: string; params: ISuperObject): IJsonRpcMessage;
 begin
   result := TJsonRpcRequestObject.Create(id, method, params);
@@ -192,7 +192,7 @@ end;
 // @param  {Integer} id
 // @param  {ISuperObject} requestResult
 // @return {ISuperObject} JsonRpc object
-class function TJsonRpcMessage.Success(const id: integer;
+class function TJsonRpcMessage.Success(const id: Int64;
   requestResult: ISuperObject): IJsonRpcMessage;
 begin
   result := TJsonRpcSuccessObject.Create(id, requestResult);
@@ -203,7 +203,7 @@ end;
 // @param  {string} requestResult
 // @return {ISuperObject} JsonRpc object
 
-class function TJsonRpcMessage.Success(const id: integer;
+class function TJsonRpcMessage.Success(const id: Int64;
   requestResult: string): IJsonRpcMessage;
 begin
   result := TJsonRpcSuccessObject.Create(id, requestResult);
@@ -226,7 +226,7 @@ end;
 // @param  {ISuperObject} error
 // @return {ISuperObject} JsonRpc object
 
-class function TJsonRpcMessage.Error(const id: integer;
+class function TJsonRpcMessage.Error(const id: Int64;
   error: IJsonRpcMessage): IJsonRpcMessage;
 begin
   result := TJsonRpcErrorObject.Create(id, error);
@@ -472,7 +472,7 @@ end;
 
 { TJsonRpcSuccessObject }
 
-constructor TJsonRpcSuccessObject.Create(const id: integer; result:
+constructor TJsonRpcSuccessObject.Create(const id: Int64; result:
   ISuperObject);
 begin
   inherited Create();
@@ -480,7 +480,7 @@ begin
   FJsonObj.O['result'] := result;
 end;
 
-constructor TJsonRpcSuccessObject.Create(const id: integer; result: string);
+constructor TJsonRpcSuccessObject.Create(const id: Int64; result: string);
 begin
   inherited Create();
   FJsonObj.I['id'] := id;
@@ -511,7 +511,7 @@ begin
   FJsonObj.O['error'] := error.AsJsonObject;
 end;
 
-constructor TJsonRpcErrorObject.Create(const id: integer; error:
+constructor TJsonRpcErrorObject.Create(const id: Int64; error:
   IJsonRpcMessage);
 begin
   inherited Create();
@@ -565,7 +565,7 @@ end;
 
 { TJsonRpcRequestObject }
 
-constructor TJsonRpcRequestObject.Create(const id: integer; const method:
+constructor TJsonRpcRequestObject.Create(const id: Int64; const method:
   string;
   params: ISuperObject);
 begin
