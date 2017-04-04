@@ -44,10 +44,10 @@ type
     class function Success(const id: string;
       requestResult: string): IJsonRpcMessage; overload;
     class function Error(const id: Int64;
-      error: IJsonRpcMessage): IJsonRpcMessage; overload;
+      errorMsg: IJsonRpcMessage): IJsonRpcMessage; overload;
     class function Error(const id: string;
-      error: IJsonRpcMessage): IJsonRpcMessage; overload;
-    class function Error(error: IJsonRpcMessage): IJsonRpcMessage; overload;
+      errorMsg: IJsonRpcMessage): IJsonRpcMessage; overload;
+    class function Error(errorMsg: IJsonRpcMessage): IJsonRpcMessage; overload;
     class function Parse(const s: string): IJsonRpcParsed;
   protected
     FJsonObj: ISuperObject;
@@ -86,9 +86,9 @@ type
   { TJsonRpcErrorObject }
 
   TJsonRpcErrorObject = class(TJsonRpcMessage, IJsonRpcMessage)
-    constructor Create(error: IJsonRpcMessage); overload;
-    constructor Create(const id: Int64; error: IJsonRpcMessage); overload;
-    constructor Create(const id: string; error: IJsonRpcMessage); overload;
+    constructor Create(errorMsg: IJsonRpcMessage); overload;
+    constructor Create(const id: Int64; errorMsg: IJsonRpcMessage); overload;
+    constructor Create(const id: string; errorMsg: IJsonRpcMessage); overload;
   end;
 
   { TJsonRpcObjectType }
@@ -227,9 +227,9 @@ end;
 // @return {ISuperObject} JsonRpc object
 
 class function TJsonRpcMessage.Error(const id: Int64;
-  error: IJsonRpcMessage): IJsonRpcMessage;
+  errorMsg: IJsonRpcMessage): IJsonRpcMessage;
 begin
-  result := TJsonRpcErrorObject.Create(id, error);
+  result := TJsonRpcErrorObject.Create(id, errorMsg);
 end;
 // Создает JSON-RPC 2.0 error object
 // @param  {string} id
@@ -237,18 +237,18 @@ end;
 // @return {ISuperObject} JsonRpc object
 
 class function TJsonRpcMessage.Error(const id: string;
-  error: IJsonRpcMessage): IJsonRpcMessage;
+  errorMsg: IJsonRpcMessage): IJsonRpcMessage;
 begin
-  result := TJsonRpcErrorObject.Create(id, error);
+  result := TJsonRpcErrorObject.Create(id, errorMsg);
 end;
 
 // Создает JSON-RPC 2.0 error object
 // @param  {ISuperObject} error
 // @return {ISuperObject} JsonRpc object
 
-class function TJsonRpcMessage.Error(error: IJsonRpcMessage): IJsonRpcMessage;
+class function TJsonRpcMessage.Error(errorMsg: IJsonRpcMessage): IJsonRpcMessage;
 begin
-  result := TJsonRpcErrorObject.Create(error);
+  result := TJsonRpcErrorObject.Create(errorMsg);
 end;
 
 //
@@ -504,27 +504,27 @@ end;
 
 { TJsonRpcErrorObject }
 
-constructor TJsonRpcErrorObject.Create(error: IJsonRpcMessage);
+constructor TJsonRpcErrorObject.Create(errorMsg: IJsonRpcMessage);
 begin
   inherited Create();
   FJsonObj.N['id'] := nil;
-  FJsonObj.O['error'] := error.AsJsonObject;
+  FJsonObj.O['error'] := errorMsg.AsJsonObject;
 end;
 
-constructor TJsonRpcErrorObject.Create(const id: Int64; error:
+constructor TJsonRpcErrorObject.Create(const id: Int64; errorMsg:
   IJsonRpcMessage);
 begin
   inherited Create();
   FJsonObj.I['id'] := id;
-  FJsonObj.O['error'] := error.AsJsonObject;
+  FJsonObj.O['error'] := errorMsg.AsJsonObject;
 end;
 
-constructor TJsonRpcErrorObject.Create(const id: string; error:
+constructor TJsonRpcErrorObject.Create(const id: string; errorMsg:
   IJsonRpcMessage);
 begin
   inherited Create();
   FJsonObj.S['id'] := id;
-  FJsonObj.O['error'] := error.AsJsonObject;
+  FJsonObj.O['error'] := errorMsg.AsJsonObject;
 end;
 
 { TJsonRpcParsed }
