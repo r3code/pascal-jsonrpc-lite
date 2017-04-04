@@ -283,7 +283,8 @@ class function TJsonRpcMessage.Parse(const s: string): IJsonRpcParsed;
   function SubIdPresentAndNotNull(AJsonObj: ISuperObject): boolean;
   begin
     result := AJsonObj.AsObject.Exists('id')
-      and not ((AJsonObj.O['id'].DataType = stNull) and (AJsonObj.N['id'] = nil))
+      and not ((AJsonObj.O['id'].DataType = stNull)
+      and (AJsonObj.N['id'] = nil))
       and (
       ((AJsonObj.O['id'].DataType = stString) and (AJsonObj.S['id'] <> ''))
       or
@@ -678,8 +679,8 @@ begin
   FJsonObj.S['data'] := data;
 end;
 
-function TJsonRpcMessage.AsJSon(indent: boolean = false; escape: boolean =
-  true): string;
+function TJsonRpcMessage.AsJSon(indent: boolean = false;
+  escape: boolean = true): string;
 begin
   Result := FJsonObj.AsJSon(indent, escape);
 end;
