@@ -554,7 +554,6 @@ constructor TJsonRpcNotificationObject.Create(const method: string;
   params: ISuperObject);
 begin
   inherited Create();
-  FJsonObj.N['id'] := nil;
   FJsonObj.S['method'] := method;
   FJsonObj.N['params'] := params;
 end;

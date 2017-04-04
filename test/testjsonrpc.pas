@@ -74,12 +74,24 @@ end;
 
 procedure TTestJsonRpc.TestParseNotifyWithParamJsonOK;
 const
-  testMsg = '{ jsonrpc: "2.0", method: "alarm_notify", params: { object: 102 } }';
+  testMsg = '{"method":"ALARM",'
+  + '"params":{'
+  + '  "alarmTime":"2016-08-24T02:05:09.036Z",'
+  + '  "alarmId":3,'
+  + '  "alarmObject":2,'
+  + '  "alarmSeqNo":0'
+  + '},'
+  + '"jsonrpc":"2.0"}';
 var
   expected, actual: IJsonRpcParsed;
 begin
   expected := TJsonRpcParsed.Create(jotNotification,
-    TJsonRpcNotificationObject.Create('alarm_notify',SO('{ object: 102 }')));
+    TJsonRpcNotificationObject.Create('ALARM',SO('{'
+  + '  "alarmTime":"2016-08-24T02:05:09.036Z",'
+  + '  "alarmId":3,'
+  + '  "alarmObject":2,'
+  + '  "alarmSeqNo":0'
+  + '}')));
   actual := TJsonRpcMessage.Parse(testMsg);
   CheckEquals(expected.GetMessagePayload.AsJSon, actual.GetMessagePayload.AsJSon());
     CheckEquals(GetMessageTypeName(expected.GetMessageType),
