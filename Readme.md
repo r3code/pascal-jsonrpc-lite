@@ -24,8 +24,9 @@ uses ujsonrpc;
 Returns object as ISuperObject clonned form internal JSON-object.    
 
 #### Method: IJsonRpcMessage.AsJSon(indent: boolean = false; escape: boolean = true): string;
-Returns a JSON string object representation.     
+Returns a JSON string object representation. 
 
+Params:
 - `indent`: {boolean} indent resulting JSON
 - `escape`: {boolean} escape special chars
 
@@ -35,10 +36,12 @@ Returns a JSON string object representation.
 Creates a JSON-RPC 2.0 request object, return IJsonRpcMessage object.
 Realizes IJsonRpcMessage.
 
+Params:
 - `id`: {String|Integer}
 - `method`: {String}
 - `params`:  {IJsonRpcMessage}
 
+Example:
 ```pascal
 var requestObj: TJsonRpcMessage; 
 requestObj := TJsonRpcMessage.Request('123', 'update', SO('{list: [1, 2, 3]}'));
@@ -54,9 +57,11 @@ writeln(requestObj.asString);
 ##### Class Method: TJsonRpcMessage.Notification(method, params)
 Creates a JSON-RPC 2.0 notification object, return IJsonRpcMessage object.
 
+Params:
 - `method`: {String}
 - `params`:  {IJsonRpcMessage}
 
+Example:
 ```pascal
 var notificationObj: TJsonRpcMessage;
 notificationObj := TJsonRpcMessage.notification('update', SO('{list: [1, 2, 3]}'));
@@ -71,9 +76,11 @@ writeln(notificationObj.asString);
 #### Class Method: TJsonRpcMessage.Success(id, result)
 Creates a JSON-RPC 2.0 success response object, return IJsonRpcMessage object.
 
+Params:
 - `id`: {String|Integer}
 - `result`:  {IJsonRpcMessage} 
 
+Example:
 ```pascal
 var msg: TJsonRpcMessage;
 msg := TJsonRpcMessage.success('123', 'OK');
@@ -88,9 +95,11 @@ writeln(msg.asString);
 #### Class Method: TJsonRpcMessage.Error(id, error)
 Creates a JSON-RPC 2.0 error response object, return IJsonRpcMessage object.
 
+Params:
 - `id`: {String|Integer}
 - `error`: {IJsonRpcMessage} use TJsonRpcError or it's siblings 
 
+Example:
 ```pascal
 var msg: TJsonRpcMessage;
 msg := TJsonRpcMessage.Error('123', TJsonRpcError.Create(-32000, 'some error', 'blabla'));
@@ -107,9 +116,10 @@ Takes a JSON-RPC 2.0 payload (string) and tries to parse it into a JSON.
 If successful, determine what object is it (response, notification, success, 
 error, or invalid), and return it's type and properly formatted object.
 
+Params:
 - `s`: {String}
 
-returns an object of IJsonRpcParsed.
+returns an object of {IJsonRpcParsed}.
 
 ### Enum: TJsonRpcObjectType
 Shows the type of message detected during Parse.
@@ -118,7 +128,7 @@ Types: jotInvalid, jotRequest, jotNotification, jotSuccess, jotError.
 ### Interface: IJsonRpcParsed
 
 #### Method: IJsonRpcParsed.GetMessageType
-Returns one of TJsonRpcObjectType.
+Returns one of <{JsonRpcObjectType}.
 
 #### Method: IJsonRpcParsed.GetMessagePayload
 Returns stored ref to IJsonRpcMessage.
@@ -131,21 +141,25 @@ Realizes interface IJsonRpcParsed.
 
 Create a TJsonRpcParsed instance.
 
+Params:
 - `objType`:  {TJsonRpcObjectType} message format type
 - `payload`:  {IJsonRpcMessage} message body
 
 
 ### Class: TJsonRpcError
+Describes JSON-RPC 2.0 Error object.
 Realizes interface IJsonRpcMessage.
 
 #### Constructor: TJsonRpcError.Create(code,message[,data])
 
 Create a TJsonRpcError instance.
 
+Params:
 - `code`:  {Integer}
 - `message`:  {String}
 - `data`: {String|ISuperObject|nil} optional
 
+Examples:
 ```pascal
 var error: TJsonRpcError;
 error =  TJsonRpcError.Create(-32651, 'some error', 'some data');
@@ -157,10 +171,31 @@ error =  TJsonRpcError.Create(-32651, 'some error', SO('{ a: 1, extra: "some dat
 ```
 
 #### Class Method: TJsonRpcError.InvalidRequest(data)
-#### Class Method: TJsonRpcError.MethodNotFound(data)
-#### Class Method: TJsonRpcError.InvalidParams(data)
-#### Class Method: TJsonRpcError.InternalError(data)
-- `data`: {String|ISuperObject|nil}
+Create {TJsonRpcError} object with error code -32600.
 
-#### Class Method: TJsonRpcError.ParseError(s)
-- `s`: {String}
+Params:
+- `data`: {String|ISuperObject|nil} - extra data
+
+#### Class Method: TJsonRpcError.MethodNotFound(data)
+Create {TJsonRpcError} object with error code -32601.
+
+Params:
+- `data`: {String|ISuperObject|nil} - extra data
+
+#### Class Method: TJsonRpcError.InvalidParams(data)
+Create {TJsonRpcError} object with error code -32602.
+
+Params:
+- `data`: {String|ISuperObject|nil} - extra data
+
+#### Class Method: TJsonRpcError.InternalError(data)
+Create {TJsonRpcError} object with error code  -32603.
+
+Params:
+- `data`: {String|ISuperObject|nil} - extra data
+
+#### Class Method: TJsonRpcError.ParseError(data)
+Create {TJsonRpcError} object with error code  -32700.
+
+Params:
+- `data`: {String} - error text
