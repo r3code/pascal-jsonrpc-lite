@@ -4,6 +4,7 @@
 unit ujsonrpc;
 {$IFDEF FPC}
 {$MODE objfpc}
+{$H+} // make string type AnsiString
 {$ENDIF}
 
 interface
