@@ -319,6 +319,7 @@ class function TJsonRpcMessage.Parse(const s: string): IJsonRpcParsed;
 
   function SubCheckResult(AJsonObj: ISuperObject;
     var FoundError: IJsonRpcParsed): boolean;
+  const ValidDataTypes = [stInt, stString, stObject, stArray];
   var
     errData: TJsonRpcError;
   begin
@@ -330,7 +331,7 @@ class function TJsonRpcMessage.Parse(const s: string): IJsonRpcParsed;
         TJsonRpcErrorObject.Create(AJsonObj.S['id'], errData));
       Exit;
     end;
-    if not (AJsonObj.O['result'].DataType in [stInt, stString, stObject]) then
+    if not (AJsonObj.O['result'].DataType in ValidDataTypes) then
     begin
       errData := TJsonRpcError.InvalidRequest(SO('Invalid Result type'));
       FoundError := TJsonRpcParsed.Create(jotInvalid,

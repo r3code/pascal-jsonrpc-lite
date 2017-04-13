@@ -19,6 +19,7 @@ type
     procedure TestParseNotifyWithParamJsonOK;
     procedure TestParseSuccessStrResultOK;
     procedure TestParseErrorOK;
+    procedure TestParseErrorWithDataObjOK;
     procedure TestParseNoJsonrpcField;
   end;
 
@@ -54,7 +55,25 @@ begin
   actual := TJsonRpcMessage.Parse(testMsg);
   CheckEquals(expected.GetMessagePayload.AsJSon, actual.GetMessagePayload.AsJSon());
   CheckEquals(GetMessageTypeName(expected.GetMessageType),
-    GetMessageTypeName(actual.GetMessageType));  
+    GetMessageTypeName(actual.GetMessageType));
+end;
+
+procedure TTestJsonRpc.TestParseErrorWithDataObjOK;
+const
+  testMsg = '{ jsonrpc: "2.0", id:1, error: { code: -32600, message: "Invalid Request", '
+  + 'data: {"method":"AUTH","params":{"secretWord":"D4A0999956449F3A5DEA3EE29BA8AEBD", "appId":100},"id":1,"jsonrpc":"2.0"}'
+  + ' } }';
+var
+  expected, actual: IJsonRpcParsed;
+begin
+  expected := TJsonRpcParsed.Create(jotError,
+    TJsonRpcErrorObject.Create(1, TJsonRpcError.Create(-32600,
+      'Invalid Request',
+      SO('{"method":"AUTH","params":{"secretWord":"D4A0999956449F3A5DEA3EE29BA8AEBD", "appId":100},"id":1,"jsonrpc":"2.0"}'))));
+  actual := TJsonRpcMessage.Parse(testMsg);
+  CheckEquals(expected.GetMessagePayload.AsJSon, actual.GetMessagePayload.AsJSon());
+  CheckEquals(GetMessageTypeName(expected.GetMessageType),
+    GetMessageTypeName(actual.GetMessageType));
 end;
 
 procedure TTestJsonRpc.TestParseNoJsonrpcField;
@@ -122,12 +141,14 @@ end;
 
 procedure TTestJsonRpc.TestParseSuccessStrResultOK;
 const
-  testMsg = '{ jsonrpc: "2.0", id:1, result: "success" }';
+  alarmsJsonStr = '[{"id":503,"alarmId":3,"alarmObject":2,"alarmTime":"2016-08-24T02:05:09.036Z"},{"id":2,"alarmId":2,"alarmObject":1,"alarmTime":"2016-08-24T05:24:17.017Z"},{"id":3,"alarmId":9,"alarmObject":3,"alarmTime":"2016-08-24T08:07:22.115Z"}]';
+  testMsg = '{"jsonrpc":"2.0","id":503,'
+    + '"result":' + alarmsJsonStr + '}';
 var
   expected, actual: IJsonRpcParsed;
 begin
   expected := TJsonRpcParsed.Create(jotSuccess,
-    TJsonRpcSuccessObject.Create(1,'success'));
+    TJsonRpcSuccessObject.Create(503, SO(alarmsJsonStr)));
   actual := TJsonRpcMessage.Parse(testMsg);
   CheckEquals(expected.GetMessagePayload.AsJSon, actual.GetMessagePayload.AsJSon());
   CheckEquals(GetMessageTypeName(expected.GetMessageType), GetMessageTypeName(actual.GetMessageType));  
