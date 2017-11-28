@@ -1,6 +1,6 @@
 //
 // Author: Dmitriy S. Sinyavskiy, 2016
-// 
+//
 unit ujsonrpc;
 {$IFDEF FPC}
 {$MODE objfpc}
@@ -148,7 +148,7 @@ type
 
 const
   JSON_RPC_VERSION_2 = '2.0';
-  
+
   FIELD_JSONRPC = 'jsonrpc';
   FIELD_ID = 'id';
   FIELD_METHOD = 'method';
@@ -156,10 +156,11 @@ const
   FIELD_RESULT = 'result';
   FIELD_ERROR = 'error';
   FIELD_ERROR_CODE = 'code';
-  FIELD_ERROR_MSG = 'message'; 
+  FIELD_ERROR_MSG = 'message';
   FIELD_ERROR_DATA = 'data';
-  
-  ERROR_INVALID_JSONRPC_VER = 'Invalid JSON-RPC Version. Supported JSON-RPC 2.0 only';
+
+  ERROR_INVALID_JSONRPC_VER =
+    'Invalid JSON-RPC Version. Supported JSON-RPC 2.0 only';
   ERROR_NO_JSONRPC_FIELD = 'No ''jsonrpc'' field present';
   ERROR_NO_METHOD_FIELD = 'No ''method'' field present';
   ERROR_NO_RESULT_FIELD = 'No ''result'' field present';
@@ -179,11 +180,11 @@ const
   CODE_INVALID_PARAMS = -32602;
   CODE_INTERNAL_ERROR = -32603;
   CODE_PARSE_ERROR = -32700;
-  
+
 implementation
 
 const
-  S_EMPTY_STR = '';  
+  S_EMPTY_STR = '';
 
 { TJsonRpcMessage }
 
@@ -192,6 +193,7 @@ const
 // @param  {String} method
 // @param  {ISuperObject} [params]: optional
 // @return {ISuperObject} JsonRpc object
+
 class function TJsonRpcMessage.Request(const id: Int64;
   const method: string; params: ISuperObject): IJsonRpcMessage;
 begin
@@ -203,6 +205,7 @@ end;
 // @param  {String} method
 // @param  {ISuperObject} [params]: optional
 // @return {ISuperObject} JsonRpc object
+
 class function TJsonRpcMessage.Request(const id: string;
   const method: string; params: ISuperObject): IJsonRpcMessage;
 begin
@@ -213,6 +216,7 @@ end;
 // @param  {String} method
 // @param  {ISuperObject} [params]: optional
 // @return {ISuperObject} JsonRpc object
+
 class function TJsonRpcMessage.Notification(const method: string;
   params: ISuperObject): IJsonRpcMessage;
 begin
@@ -229,6 +233,7 @@ end;
 // @param  {Integer} id
 // @param  {ISuperObject} requestResult
 // @return {ISuperObject} JsonRpc object
+
 class function TJsonRpcMessage.Success(const id: Int64;
   requestResult: ISuperObject): IJsonRpcMessage;
 begin
@@ -283,7 +288,8 @@ end;
 // @param  {ISuperObject} error
 // @return {ISuperObject} JsonRpc object
 
-class function TJsonRpcMessage.Error(errorMsg: IJsonRpcMessage): IJsonRpcMessage;
+class function TJsonRpcMessage.Error(errorMsg: IJsonRpcMessage):
+  IJsonRpcMessage;
 begin
   result := TJsonRpcErrorObject.Create(errorMsg);
 end;
@@ -295,7 +301,7 @@ end;
 class function TJsonRpcMessage.Parse(const s: string): IJsonRpcParsed;
 
   function SubCheckHeader(AJsonObj: ISuperObject;
-    var FoundError: IJsonRpcParsed): boolean;  
+    var FoundError: IJsonRpcParsed): boolean;
   var
     errData: TJsonRpcError;
   begin
@@ -323,8 +329,8 @@ class function TJsonRpcMessage.Parse(const s: string): IJsonRpcParsed;
       and not ((AJsonObj.O[FIELD_ID].DataType = stNull)
       and (AJsonObj.N[FIELD_ID] = nil))
       and (
-      ((AJsonObj.O[FIELD_ID].DataType = stString) 
-        and (AJsonObj.S[FIELD_ID] <> S_EMPTY_STR))
+      ((AJsonObj.O[FIELD_ID].DataType = stString)
+      and (AJsonObj.S[FIELD_ID] <> S_EMPTY_STR))
       or
       (AJsonObj.O[FIELD_ID].DataType = stInt)
       );
@@ -357,7 +363,8 @@ class function TJsonRpcMessage.Parse(const s: string): IJsonRpcParsed;
 
   function SubCheckResult(AJsonObj: ISuperObject;
     var FoundError: IJsonRpcParsed): boolean;
-  const ValidDataTypes = [stInt, stString, stObject, stArray];
+  const
+    ValidDataTypes = [stInt, stString, stObject, stArray];
   var
     errData: TJsonRpcError;
   begin
@@ -395,7 +402,7 @@ class function TJsonRpcMessage.Parse(const s: string): IJsonRpcParsed;
     errObj := AJsonObj.O[FIELD_ERROR];
     if not (
       (errObj.DataType = stObject)
-      and errObj.AsObject.Exists(FIELD_ERROR_CODE) 
+      and errObj.AsObject.Exists(FIELD_ERROR_CODE)
       and (errObj.O[FIELD_ERROR_CODE].DataType = stInt)
       and errObj.AsObject.Exists(FIELD_ERROR_MSG)
       and (errObj.O[FIELD_ERROR_MSG].DataType = stString)
@@ -456,11 +463,11 @@ class function TJsonRpcMessage.Parse(const s: string): IJsonRpcParsed;
         case AJsonObj.O[FIELD_ID].DataType of
           stInt:
             result := TJsonRpcParsed.Create(jotSuccess,
-              TJsonRpcMessage.Success(AJsonObj.I[FIELD_ID], 
+              TJsonRpcMessage.Success(AJsonObj.I[FIELD_ID],
               AJsonObj.O[FIELD_RESULT]));
           stString:
             result := TJsonRpcParsed.Create(jotSuccess,
-              TJsonRpcMessage.Success(AJsonObj.S[FIELD_ID], 
+              TJsonRpcMessage.Success(AJsonObj.S[FIELD_ID],
               AJsonObj.O[FIELD_RESULT]));
         end;
         Exit;
@@ -477,14 +484,14 @@ class function TJsonRpcMessage.Parse(const s: string): IJsonRpcParsed;
           stInt:
             result := TJsonRpcParsed.Create(jotError,
               TJsonRpcMessage.Error(AJsonObj.I[FIELD_ID], TJsonRpcError.Create(
-              errorObj.I[FIELD_ERROR_CODE], 
-              errorObj.S[FIELD_ERROR_MSG], 
+              errorObj.I[FIELD_ERROR_CODE],
+              errorObj.S[FIELD_ERROR_MSG],
               errorObj.N[FIELD_ERROR_DATA])));
           stString:
             result := TJsonRpcParsed.Create(jotError,
               TJsonRpcMessage.Error(AJsonObj.S[FIELD_ID], TJsonRpcError.Create(
-              errorObj.I[FIELD_ERROR_CODE], 
-              errorObj.S[FIELD_ERROR_MSG], 
+              errorObj.I[FIELD_ERROR_CODE],
+              errorObj.S[FIELD_ERROR_MSG],
               errorObj.N[FIELD_ERROR_DATA])));
         end;
         Exit;
@@ -651,42 +658,50 @@ end;
 
 class function TJsonRpcError.InvalidRequest(data: ISuperObject): TJsonRpcError;
 begin
-  result := TJsonRpcError.Create(CODE_INVALID_REQUEST, PRC_ERR_INVALID_REQUEST, data);
+  result := TJsonRpcError.Create(CODE_INVALID_REQUEST, PRC_ERR_INVALID_REQUEST,
+    data);
 end;
 
 class function TJsonRpcError.InvalidRequest(data: string): TJsonRpcError;
 begin
-  result := TJsonRpcError.Create(CODE_INVALID_REQUEST, PRC_ERR_INVALID_REQUEST, data);
+  result := TJsonRpcError.Create(CODE_INVALID_REQUEST, PRC_ERR_INVALID_REQUEST,
+    data);
 end;
 
 class function TJsonRpcError.MethodNotFound(data: ISuperObject): TJsonRpcError;
 begin
-  result := TJsonRpcError.Create(CODE_METHOD_NOT_FOUND, PRC_ERR_METHOD_NOT_FOUND, data);
+  result := TJsonRpcError.Create(CODE_METHOD_NOT_FOUND,
+    PRC_ERR_METHOD_NOT_FOUND, data);
 end;
 
 class function TJsonRpcError.MethodNotFound(data: string): TJsonRpcError;
 begin
-  result := TJsonRpcError.Create(CODE_METHOD_NOT_FOUND, PRC_ERR_METHOD_NOT_FOUND, data);
+  result := TJsonRpcError.Create(CODE_METHOD_NOT_FOUND,
+    PRC_ERR_METHOD_NOT_FOUND, data);
 end;
 
 class function TJsonRpcError.InvalidParams(data: ISuperObject): TJsonRpcError;
 begin
-  result := TJsonRpcError.Create(CODE_INVALID_PARAMS, RPC_ERR_INVALID_PARAMS, data);
+  result := TJsonRpcError.Create(CODE_INVALID_PARAMS, RPC_ERR_INVALID_PARAMS,
+    data);
 end;
 
 class function TJsonRpcError.InvalidParams(data: string): TJsonRpcError;
 begin
-  result := TJsonRpcError.Create(CODE_INVALID_PARAMS, RPC_ERR_INVALID_PARAMS, data);
+  result := TJsonRpcError.Create(CODE_INVALID_PARAMS, RPC_ERR_INVALID_PARAMS,
+    data);
 end;
 
 class function TJsonRpcError.InternalError(data: ISuperObject): TJsonRpcError;
 begin
-  result := TJsonRpcError.Create(CODE_INTERNAL_ERROR, RPC_ERR_INTERNAL_ERROR, data);
+  result := TJsonRpcError.Create(CODE_INTERNAL_ERROR, RPC_ERR_INTERNAL_ERROR,
+    data);
 end;
 
 class function TJsonRpcError.InternalError(data: string): TJsonRpcError;
 begin
-  result := TJsonRpcError.Create(CODE_INTERNAL_ERROR, RPC_ERR_INTERNAL_ERROR, data);
+  result := TJsonRpcError.Create(CODE_INTERNAL_ERROR, RPC_ERR_INTERNAL_ERROR,
+    data);
 end;
 
 function TJsonRpcError.AsJsonObject: ISuperObject;

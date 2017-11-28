@@ -1,6 +1,6 @@
 //
 // Author: Dmitriy S. Sinyavskiy, 2016
-// 
+//
 unit utestcustomerrors;
 
 interface
@@ -26,7 +26,8 @@ procedure TTestCustomErrors.TestAuthErrorWithDataObj;
 var
   expected, actual: TJsonRpcError;
 begin
-  expected := TJsonRpcError.Create(-32201, 'Authentication Error', SO('blabla'));
+  expected := TJsonRpcError.Create(-32201, 'Authentication Error',
+    SO('blabla'));
   actual := TJsonRpcCustomError.AuthError(SO('blabla'));
   CheckEquals(expected.AsJSon(), actual.AsJSon());
 end;
